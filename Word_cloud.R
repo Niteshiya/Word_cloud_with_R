@@ -43,3 +43,27 @@ grayLevel <- gray((wordFreq+10)/(max(wordFreq)+10))
 wordcloud(words=names(wordFreq),freq=wordFreq,min.freq=5,random.order = F,color=grayLevel)
 #2nd with colors
 wordcloud(words=names(wordFreq),freq=wordFreq,min.freq=5,random.order = F,color=brewer.pal(11,"Paired"))
+
+library(wordcloud2)
+df <- data.frame(names(wordFreq),wordFreq)
+colnames(df) <- c("Word","Frequency")
+head(df)
+#remove all non utf-8 characters
+df$Word <- iconv(df$Word,from="UTF-8",to="UTF-8",sub="")
+wordcloud2(df,size=0.8,shape="star")
+
+#sentiments analysis
+library(syuzhet)
+library(reshape2)
+library(dplyr)
+library(scales)
+library(ggplot2)
+library(lubridate)
+
+sentiment_score <- get_nrc_sentiment(as.character(cleantxt))
+#my pdf is alone so it takes all the text data in the 1st row
+sentiment_score <- sentiment_score[1,]
+sentiment_score
+
+#bar plot
+barplot(colSums(sentiment_score),las=2,ylab="Score",col=rainbow(10))
